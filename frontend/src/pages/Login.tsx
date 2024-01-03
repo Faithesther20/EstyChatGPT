@@ -1,16 +1,25 @@
 import { Box, Button, Typography } from '@mui/material'
 import { AiOutlineLogin } from "react-icons/ai";
-
+import  {toast} from 'react-hot-toast';
 
 import CustomizedInput from '../components/shared/CustomizedInput'
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
-  const  handleSubmit =(e:React.FormEvent<HTMLFormElement>)=>{
+  const auth = useAuth();
+  const  handleSubmit =async (e:React.FormEvent<HTMLFormElement>)=>{
      e.preventDefault();
      const formData = new FormData(e.currentTarget);
-     const email = formData.get('email');
-     const password = formData.get('password');
-     console.log(email, password)
+     const email = formData.get('email') as string;
+     const password = formData.get('password') as string;
+     try {
+      toast.loading("Signing In...",{id:"login"});
+      await auth?.login(email, password); 
+      toast.success("Sign In successful",{id:"login"});
+     } catch (error) {
+      toast.error("Sign In failed",{id:"login"});
+      console.log(error);
+     }
   }
   return (
     <Box width={"100%"} height={"100%"} display="flex" flex={1}>
